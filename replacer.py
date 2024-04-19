@@ -1,9 +1,9 @@
-from replacedata import ReplaceData
+from wordmap import WordMap
 from template import Template
 
 
 #based on https://stackoverflow.com/a/24813382
-def replace(template: Template, replace_data: ReplaceData, output_dir: str):
+def replace(template: Template, replace_data: WordMap, output_dir: str):
     doc = template.get_document()
     for paragraph in doc.paragraphs:
         for run in paragraph.runs:

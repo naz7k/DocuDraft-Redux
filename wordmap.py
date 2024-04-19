@@ -1,20 +1,20 @@
 from key import Key
 
 
-class ReplaceData:
+class WordMap:
 
-    replace_data: dict[str, str]
+    word_map: dict[str, str]
     key: Key
 
     def __init__(self, key: Key):
-        self.replace_data = {}
+        self.word_map = {}
         self.key = key
 
     def add_pair(self, wildcard: str, word: str) -> None:
-        self.replace_data[wildcard] = word
+        self.word_map[wildcard] = word
 
     def get_data(self):
-        return self.replace_data.copy()
+        return self.word_map.copy()
 
     def get_key(self) -> Key:
         return self.key
