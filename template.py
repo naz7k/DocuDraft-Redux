@@ -17,6 +17,3 @@ class Template:
 
     def get_document(self) -> Document:
         return self.document
-
-    def _save_template(self) -> None:
-        self.document.save(self.name)
