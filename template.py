@@ -1,5 +1,7 @@
 from docx import Document
 
+from FileTypeError import FileTypeError
+
 
 class Template:
     document: Document
@@ -7,7 +9,7 @@ class Template:
 
     def __init__(self, file: str, name : str):
         if file[len(file)-5:] != '.docx':
-            raise Exception("File must be of format .docx (Word 2007 onwards)")
+            raise FileTypeError("File must be of format .docx (Word 2007 onwards)")
 
         self.document = Document(file)
 
