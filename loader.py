@@ -5,13 +5,14 @@ import json
 from wordmap import WordMap
 
 
-def load_templates(template_dir='./Templates/') -> list[Template]:
+def load_templates(template_dir: str = './Templates/', template_data: str = 'TemplateData.json') -> list[Template]:
     """
     Loads the templates in the provided directory. Requires a TemplateData.json file indicating the key.
     :param template_dir: The directory in which all templates reside.
+    :param template_data: The directory of the template data file within the template_dir.
     :return: A list of template objects.
     """
-    td = open(template_dir + 'TemplateData.json')
+    td = open(template_dir + template_data)
     template_data = json.load(td)
 
     files = listdir(template_dir)
