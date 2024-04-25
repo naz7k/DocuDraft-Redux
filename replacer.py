@@ -3,49 +3,56 @@ from wordmap import WordMap
 from template import Template
 
 
-#based on https://stackoverflow.com/a/24813382
+# inpired by https://stackoverflow.com/a/24813382, adapted to work on text split over multiple runs
 def replace(template: Template, word_map: WordMap, output_dir: str):
     doc = template.get_document()
 
+    # I am assuming a search term can't be divided into 2 paragraphs. If it is then may God have mercy on my code
     for paragraph in doc.paragraphs:
         for wildcard in word_map.get_data().keys():
             search_term = template.get_key().get_code() + wildcard
             if search_term in paragraph.text:
-                index_st = 0
+                n = 0 # keeps track of what character in the search term we are looking at
                 start_run = -1
+                start_index = -1
 
                 try:
+                    # runs through every character in every run
                     for i in range(len(paragraph.runs)):
                         for s in range(len(paragraph.runs[i].text)):
-                            if paragraph.runs[i].text[s] == search_term[index_st]:
-                                if index_st == 0:
+                            # if the character at i[s] is the #n^th character of the search term...
+                            if paragraph.runs[i].text[s] == search_term[n]:
+                                if n == 0:  # if it's the first character remember index
                                     start_run = i
                                     start_index = s
-                                index_st += 1
+                                n += 1
                             else:
-                                index_st = 0
+                                n = 0
 
-                            if index_st + 1 == len(search_term):
-                                if start_run == i:
-                                    paragraph.runs[i].text = paragraph.runs[i].text.replace(search_term, word_map.get_data()[wildcard])
+                            if n == len(search_term): # if we've reached this point the search term is found
+                                if start_run == i:  # if it is located within one run
+                                    paragraph.runs[i].text = paragraph.runs[i].text.replace(search_term,
+                                                                                            word_map.get_data()[
+                                                                                                wildcard])
+                                # if it isn't :(
                                 elif start_run < i:
-                                    paragraph.runs[start_run].text = paragraph.runs[start_run].text[:start_index] + word_map.get_data()[wildcard]
-
-                                    for j in range(start_index+1, i):
+                                    # 1: remove any bits of the search term from the first run
+                                    paragraph.runs[start_run].text = paragraph.runs[start_run].text[:start_index]
+                                    # 2: remove any bits of the search term from the last run
+                                    paragraph.runs[i].text = paragraph.runs[i].text[s + 1:]
+                                    # 3: remove search term segments from runs in-between
+                                    for j in range(start_run + 1, i):
                                         paragraph.runs[j].text = ''
+                                    # 4: insert word which replaces search term
+                                    paragraph.runs[start_run].text += word_map.get_data()[wildcard]
 
-                                    paragraph.runs[i].text = paragraph.runs[i].text[s:]
-
-                                index_st = 0
+                                n = 0
                                 if search_term in paragraph.text:
                                     continue
                                 else:
                                     raise Exception("Done")
                 except Exception:
                     continue
-
-
-
 
     for table in doc.tables:
         for row in table.rows:
