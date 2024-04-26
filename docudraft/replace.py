@@ -1,6 +1,5 @@
-from fixedqueue import FixedQueue
-from wordmap import WordMap
 from template import Template
+from user.data.wordmap import WordMap
 
 
 # inpired by https://stackoverflow.com/a/24813382, adapted to work on text split over multiple runs
@@ -12,7 +11,7 @@ def replace(template: Template, word_map: WordMap, output_dir: str):
         for wildcard in word_map.get_data().keys():
             search_term = template.get_key().get_code() + wildcard
             if search_term in paragraph.text:
-                n = 0 # keeps track of what character in the search term we are looking at
+                n = 0  # keeps track of what character in the search term we are looking at
                 start_run = -1
                 start_index = -1
 
@@ -29,7 +28,7 @@ def replace(template: Template, word_map: WordMap, output_dir: str):
                             else:
                                 n = 0
 
-                            if n == len(search_term): # if we've reached this point the search term is found
+                            if n == len(search_term):  # if we've reached this point the search term is found
                                 if start_run == i:  # if it is located within one run
                                     paragraph.runs[i].text = paragraph.runs[i].text.replace(search_term,
                                                                                             word_map.get_data()[

@@ -1,7 +1,7 @@
 from docx import Document
 
-from FileTypeError import FileTypeError
-from key import Key
+from exceptions import FileTypeError
+from user.data.key import Key
 
 
 class Template:

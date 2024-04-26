@@ -1,18 +1,20 @@
-from template import *
 from os import listdir
 import json
 
-from wordmap import WordMap
+from user.data.wordmap import WordMap
+from user.data.key import Key
+from template import Template
+from exceptions import FileTypeError
 
 
-def load_templates(template_dir: str = './Templates/', template_data: str = 'TemplateData.json') -> list[Template]:
+def load_templates(template_dir: str = './Templates/', template_data: str = './Templates/TemplateData.json') -> list[Template]:
     """
     Loads the templates in the provided directory. Requires a TemplateData.json file indicating the key.
     :param template_dir: The directory in which all templates reside.
     :param template_data: The directory of the template data file within the template_dir.
     :return: A list of template objects.
     """
-    td = open(template_dir + template_data)
+    td = open(template_data)
     template_data = json.load(td)
 
     files = listdir(template_dir)
@@ -32,11 +34,6 @@ def load_word_map_json(word_map_file: str = 'WordMap.json') -> WordMap:
     Loads the word map mapping wildcards to words to be filled.
     :param word_map_file: Location of Word Map file.
     :return: Word Map object containing mappings.
-
-    >>> wmf = '{"CORPORATION": "EXAMPLE INC", "PRESIDENT": "John Doe"}'
-    >>> wm = load_word_map_json(wmf)
-    >>> wm.get_data()["CORPORATION"]
-    'EXAMPLE INC'
     """
     wmf = open(word_map_file)
     word_map_dict = json.load(wmf)
