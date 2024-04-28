@@ -1,5 +1,5 @@
-from run import run
-
+import docudraft.user.interfaces.cli
+from docudraft.instance import Instance
 
 if __name__ == '__main__':
-    run('../Templates/', '../Templates/TemplateData.json', '../WordMap.json')
+    docudraft.user.interfaces.cli.DocuDraftCLI(Instance()).cmdloop()

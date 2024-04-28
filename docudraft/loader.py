@@ -1,13 +1,13 @@
 from os import listdir
 import json
 
-from user.data.wordmap import WordMap
-from user.data.key import Key
-from template import Template
-from exceptions import FileTypeError
+from docudraft.user.data.wordmap import WordMap
+from docudraft.user.data.key import Key
+from docudraft.template import Template
+from docudraft.exceptions import FileTypeError
 
 
-def load_templates(template_dir: str = './Templates/', template_data: str = './Templates/TemplateData.json') -> list[Template]:
+def load_templates(template_dir: str, template_data: str) -> list[Template]:
     """
     Loads the templates in the provided directory. Requires a TemplateData.json file indicating the key.
     :param template_dir: The directory in which all templates reside.
@@ -29,7 +29,7 @@ def load_templates(template_dir: str = './Templates/', template_data: str = './T
     return templates
 
 
-def load_word_map_json(word_map_file: str = 'WordMap.json') -> WordMap:
+def load_word_map_json(word_map_file: str) -> WordMap:
     """
     Loads the word map mapping wildcards to words to be filled.
     :param word_map_file: Location of Word Map file.
