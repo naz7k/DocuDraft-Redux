@@ -16,16 +16,14 @@ class DocuDraftCLI(Cmd, UserInterface):
 
     def do_run(self, arg):
         """Run the program with the defined settings."""
-        self.instance.run()
-        return
+        print("%s document(s) drafted successfully." % self.instance.run())
 
-    def do_set(self, setting, pointer):
-        """Change the location of templateDir, templateData, wordMapFile"""
-        match setting:
-            case 'templateDir':
-                self.instance.template_dir = pointer
-            case 'templateData':
-                self.instance.template_data = pointer
-            case 'wordMapFile':
-                self.instance.word_map_file = pointer
+    def do_set(self, setting, path):
+        """Change the location of templateDir, templateData, wordMapFile
+            usage: set setting path"""
+        self.instance.set_settings(setting, path)
 
+    def do_see(self, setting):
+        """See the current  of templateDir, templateData, wordMapFile
+            usage: see setting"""
+        print(self.instance.get_settings(setting))
