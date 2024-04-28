@@ -1,9 +1,16 @@
-from template import Template
-from user.data.wordmap import WordMap
+from docudraft.template import Template
+from docudraft.user.data.wordmap import WordMap
 
 
 # inpired by https://stackoverflow.com/a/24813382, adapted to work on text split over multiple runs
-def replace(template: Template, word_map: WordMap, output_dir: str):
+def replace(template: Template, word_map: WordMap, output_dir: str) -> bool:
+    """
+    Replaces the words in a .docx document template as specified in the word map.
+    :param template: Template object containing a loaded docx file, a key, and a name.
+    :param word_map: An object containing a dictionary with keys to be replaced by values in the template.
+    :param output_dir: The directory in which the output doc should be saved.
+    :return: True if the operation is successful.
+    """
     doc = template.get_document()
 
     # I am assuming a search term can't be divided into 2 paragraphs. If it is then may God have mercy on my code
@@ -63,3 +70,5 @@ def replace(template: Template, word_map: WordMap, output_dir: str):
                         paragraph.text = paragraph_text
 
     doc.save(output_dir + template.name)
+
+    return True
