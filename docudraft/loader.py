@@ -1,19 +1,14 @@
 from os import listdir
 import json
 
+from docudraft.template.template_package import TemplatePackage
 from docudraft.user.data.wordmap import WordMap
 from docudraft.user.data.key import Key
-from docudraft.template import Template
+from docudraft.template.template import Template
 from docudraft.exceptions import FileTypeError
 
 
-def load_templates(template_dir: str, template_data: str) -> list[Template]:
-    """
-    Loads the templates in the provided directory. Requires a TemplateData.json file indicating the key.
-    :param template_dir: The directory in which all templates reside.
-    :param template_data: The directory of the template data file within the template_dir.
-    :return: A list of template objects.
-    """
+def create_template_package(template_dir: str, template_data: str) -> TemplatePackage:
     td = open(template_data)
     template_data = json.load(td)
 
@@ -22,20 +17,10 @@ def load_templates(template_dir: str, template_data: str) -> list[Template]:
 
     for i in files:
         try:
-            templates.append(Template(template_dir + i, i, Key(template_data["key"])))
+            templates.append(Template(template_dir + i, i))
         except FileTypeError:
             continue
 
-    return templates
+    tp = TemplatePackage(templates, Key(template_data["key"]), WordMap(template_data["word_map"]))
 
-
-def load_word_map_json(word_map_file: str) -> WordMap:
-    """
-    Loads the word map mapping wildcards to words to be filled.
-    :param word_map_file: Location of Word Map file.
-    :return: Word Map object containing mappings.
-    """
-    wmf = open(word_map_file)
-    word_map_dict = json.load(wmf)
-    word_map = WordMap(word_map_dict)
-    return word_map
+    return tp
