@@ -21,9 +21,9 @@ class DocuDraftCLI(Cmd, UserInterface):
     def do_set(self, setting, path):
         """Change the location of templateDir, templateData, wordMapFile
             usage: set setting path"""
-        self.instance.set_settings(setting, path)
+        self.instance.set_io_settings(setting, path)
 
     def do_see(self, setting):
         """See the current  of templateDir, templateData, wordMapFile
             usage: see setting"""
-        print(self.instance.get_settings(setting))
+        print(self.instance.get_io_settings(setting))
