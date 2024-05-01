@@ -13,7 +13,7 @@ class Instance:
         self.template_data = defaults.TEMPLATE_DATA
         self.output_dir = defaults.OUTPUT_DIR
 
-    def set_settings(self, setting, path):
+    def set_io_settings(self, setting, path):
         match setting:
             case 'templateDir':
                 self.template_dir = path
@@ -22,7 +22,7 @@ class Instance:
             case 'outputDir':
                 self.output_dir = path
 
-    def get_settings(self, setting) -> str:
+    def get_io_settings(self, setting) -> str:
         match setting:
             case 'templateDir':
                 return self.template_dir
@@ -31,6 +31,7 @@ class Instance:
             case 'outputDir':
                 return self.output_dir
 
+
     def run(self) -> int:
         """
         Runs the program, outputs drafted docs.
@@ -38,7 +39,7 @@ class Instance:
         """
 
         # TODO: choose template pack functionality
-        templates = loader.create_template_package(template_dir=self.template_dir, template_data=self.template_data)
+        templates = loader.load_template_package_from_raw_data(template_dir=self.template_dir, template_data=self.template_data)
 
         draft_num = 0
         for template in templates.template_package:
