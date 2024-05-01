@@ -18,10 +18,8 @@ class DocuDraftCLI(Cmd, UserInterface):
         """Run the program with the defined settings."""
         print("%s document(s) drafted successfully." % self.instance.run())
 
-    def do_set(self, setting, path):
-        """Change the location of templateDir, templateData, wordMapFile
-            usage: set setting path"""
-        self.instance.set_io_settings(setting, path)
+    def do_loadtp(self, path: str):
+        self.instance.load_template_package(path)
 
     def do_see(self, setting):
         """See the current  of templateDir, templateData, wordMapFile

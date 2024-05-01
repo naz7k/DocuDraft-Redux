@@ -1,3 +1,2 @@
-TEMPLATE_DIR = './Templates/'
-TEMPLATE_DATA = './Templates/TemplateData.json'
+TEMPLATE_PACK_DIR = './TemplatePackages/'
 OUTPUT_DIR = './output/'
