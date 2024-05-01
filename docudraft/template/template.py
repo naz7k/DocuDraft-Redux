@@ -1,19 +1,17 @@
 from docx import Document
 
-from docudraft.exceptions import FileTypeError
-from docudraft.user.data.key import Key
-
 
 class Template:
     document: Document
     name: str
 
-    def __init__(self, file: str, name: str):
-        if file[len(file) - 5:] != '.docx':
-            raise FileTypeError("File must be of format .docx (Word 2007 onwards)")
-
-        self.document = Document(file)
+    def __init__(self, document: Document, name: str):
+        self.document = document
 
         self.name = name
-        if self.name[len(name) - 5:] != '.docx':
+        if self.name[-5:] != '.docx':
             self.name += '.docx'
+
+    @classmethod
+    def from_path(cls, file_path: str, name: str):
+        return cls(Document(file_path), name)
