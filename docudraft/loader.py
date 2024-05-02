@@ -1,41 +1,41 @@
+import tarfile
 from os import listdir
 import json
+import docx
 
+from docudraft.template.template_package import TemplatePackage
 from docudraft.user.data.wordmap import WordMap
 from docudraft.user.data.key import Key
-from docudraft.template import Template
+from docudraft.template.template import Template
 from docudraft.exceptions import FileTypeError
 
 
-def load_templates(template_dir: str, template_data: str) -> list[Template]:
-    """
-    Loads the templates in the provided directory. Requires a TemplateData.json file indicating the key.
-    :param template_dir: The directory in which all templates reside.
-    :param template_data: The directory of the template data file within the template_dir.
-    :return: A list of template objects.
-    """
-    td = open(template_data)
-    template_data = json.load(td)
+def create_template_package_file(template_dir: str, template_data: str, file_name: str = None) -> None:
+    if file_name is None:
+        file_name = json.load(open(template_data))['name']
+    f = tarfile.open(file_name + '.dxtp', "w")
+    f.add(template_data, arcname='tdata.json')
 
+    # docx files
     files = listdir(template_dir)
+    for i in files:
+        if i[-5:] == '.docx':
+            f.add(template_dir + i, arcname='template/' + i)
+
+    f.close()
+
+
+def load_template_package(template_package_tar: str) -> TemplatePackage:
+    f = tarfile.open(template_package_tar)
+    m = f.getmembers()
+
+    tdata = json.load(f.extractfile(f.getmember('tdata.json')))
     templates = []
 
-    for i in files:
-        try:
-            templates.append(Template(template_dir + i, i, Key(template_data["key"])))
-        except FileTypeError:
-            continue
+    for i in m:
+        if i.path.split('/')[0] == 'template':
+            templates.append(Template(document=docx.Document(f.extractfile(i)), name=i.path.split('/')[1]))
 
-    return templates
+    tp = TemplatePackage(tdata['name'], tdata['description'], templates, Key(tdata['key']), WordMap(tdata['word_map']))
 
-
-def load_word_map_json(word_map_file: str) -> WordMap:
-    """
-    Loads the word map mapping wildcards to words to be filled.
-    :param word_map_file: Location of Word Map file.
-    :return: Word Map object containing mappings.
-    """
-    wmf = open(word_map_file)
-    word_map_dict = json.load(wmf)
-    word_map = WordMap(word_map_dict)
-    return word_map
+    return tp

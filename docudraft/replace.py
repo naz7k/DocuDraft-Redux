@@ -1,22 +1,25 @@
-from docudraft.template import Template
+from docudraft.template.template import Template
+from docudraft.user.data.key import Key
 from docudraft.user.data.wordmap import WordMap
+from docudraft.exceptions.FinishedSearching import FinishedSearching
 
 
-# inpired by https://stackoverflow.com/a/24813382, adapted to work on text split over multiple runs
-def replace(template: Template, word_map: WordMap, output_dir: str) -> bool:
+# inspired by https://stackoverflow.com/a/24813382, adapted to work on text split over multiple runs
+def search_and_replace(template: Template, word_map: WordMap, key: Key, output_dir: str) -> bool:
     """
     Replaces the words in a .docx document template as specified in the word map.
     :param template: Template object containing a loaded docx file, a key, and a name.
     :param word_map: An object containing a dictionary with keys to be replaced by values in the template.
+    :param key: the key indicating wildcards in the templates
     :param output_dir: The directory in which the output doc should be saved.
     :return: True if the operation is successful.
     """
-    doc = template.get_document()
+    doc = template.document
 
     # I am assuming a search term can't be divided into 2 paragraphs. If it is then may God have mercy on my code
     for paragraph in doc.paragraphs:
         for wildcard in word_map.get_data().keys():
-            search_term = template.get_key().get_code() + wildcard
+            search_term = key.get_code() + wildcard
             if search_term in paragraph.text:
                 n = 0  # keeps track of what character in the search term we are looking at
                 start_run = -1
@@ -56,8 +59,8 @@ def replace(template: Template, word_map: WordMap, output_dir: str) -> bool:
                                 if search_term in paragraph.text:
                                     continue
                                 else:
-                                    raise Exception("Done")
-                except Exception:
+                                    raise FinishedSearching()
+                except FinishedSearching:
                     continue
 
     for table in doc.tables:
@@ -65,7 +68,7 @@ def replace(template: Template, word_map: WordMap, output_dir: str) -> bool:
             for cell in row.cells:
                 for paragraph in cell.paragraphs:
                     for wildcard in word_map.get_data().keys():
-                        paragraph_text = paragraph.text.replace(template.get_key().get_code() + wildcard,
+                        paragraph_text = paragraph.text.replace(key.get_code() + wildcard,
                                                                 word_map.get_data()[wildcard])
                         paragraph.text = paragraph_text
 

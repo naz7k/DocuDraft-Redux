@@ -16,14 +16,26 @@ class DocuDraftCLI(Cmd, UserInterface):
 
     def do_run(self, arg):
         """Run the program with the defined settings."""
-        print("%s document(s) drafted successfully." % self.instance.run())
+        if self.instance.run():
+            print("Document(s) drafted successfully.")
+        else:
+            print("No template package loaded. Please try again.")
 
-    def do_set(self, setting, path):
-        """Change the location of templateDir, templateData, wordMapFile
-            usage: set setting path"""
-        self.instance.set_settings(setting, path)
+    def do_loadtp(self, path: str):
+        """Load a template package of type .dxtp
+        usage: loadtp <path>"""
+        self.instance.load_template_package(path)
 
-    def do_see(self, setting):
-        """See the current  of templateDir, templateData, wordMapFile
-            usage: see setting"""
-        print(self.instance.get_settings(setting))
+    def do_info(self, arg):
+        """Show the current settings configuration"""
+        try:
+            print("Loaded template package: %s" % self.instance.loaded_template_package.name)
+        except AttributeError:
+            print("No Loaded Template Package!")
+        print("Output directory: %s" % self.instance.output_dir)
+
+    def do_modwm(self, args: str):
+        """Modify or display the word map of the loaded template.
+        usage: <wildcard>:<value>,<wildcard2>:<value2>,..."""
+        kwargs = dict(item.split(':') for item in args.split(','))
+        print(self.instance.modify_word_map(**kwargs).word_map)

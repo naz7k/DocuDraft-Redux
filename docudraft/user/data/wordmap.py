@@ -6,8 +6,5 @@ class WordMap:
             word_map = {}
         self.word_map = word_map
 
-    def add_pair(self, wildcard: str, word: str) -> None:
-        self.word_map[wildcard] = word
-
     def get_data(self):
         return self.word_map.copy()
