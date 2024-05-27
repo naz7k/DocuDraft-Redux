@@ -8,3 +8,7 @@ class WordMap:
 
     def get_data(self):
         return self.word_map.copy()
+
+    def clear(self):
+        for i in self.word_map:
+            self.word_map[i] = ''

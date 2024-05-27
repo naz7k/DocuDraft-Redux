@@ -16,6 +16,6 @@ if __name__ == '__main__':
         case True:
             cli.DocuDraftCLI(Instance()).cmdloop()
         case False:
-            gui.app.mainloop()
+            gui.App(Instance()).mainloop()
 
 

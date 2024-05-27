@@ -2,18 +2,19 @@ import docudraft.loader as loader
 import docudraft.replace as replace
 import docudraft.defaults as defaults
 from docudraft.template.template_package import TemplatePackage
+from docudraft.user.data.key import Key
 from docudraft.user.data.wordmap import WordMap
 
 
 class Instance:
-    loaded_template_package: TemplatePackage | None
+    loaded_template_package: TemplatePackage
     template_package_dir: str  # where to look for dxtp files, used for gui
     output_dir: str
 
     def __init__(self):
         self.template_package_dir = defaults.TEMPLATE_PACK_DIR
         self.output_dir = defaults.OUTPUT_DIR
-        self.loaded_template_package = None
+        self.loaded_template_package = TemplatePackage("No Template Package Loaded", "", [], Key(""), WordMap({}))
 
     def load_template_package(self, dxtp_path: str) -> None:
         self.loaded_template_package = loader.load_template_package(dxtp_path)
