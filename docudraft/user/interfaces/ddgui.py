@@ -52,6 +52,7 @@ class Editor(ctk.CTkScrollableFrame):
         self.grid_rowconfigure(index=2, weight=4, minsize=0)
         self.grid_rowconfigure(index=3, weight=4, minsize=0)
         self.grid_rowconfigure(index=4, weight=10, minsize=0)
+        self.grid_rowconfigure(index=5, weight=3, minsize=0)
 
         self.title = ctk.CTkLabel(self, text='DocuDraft v.%s' % __version__, font=title_font)
         self.title.grid(row=0, column=0, sticky='nsew', padx=10, pady=10, columnspan=2)
@@ -59,8 +60,11 @@ class Editor(ctk.CTkScrollableFrame):
         self.load_button = ctk.CTkButton(self, text="Load Template", command=self._load, font=default_font, height=40)
         self.load_button.grid(row=1, column=0, sticky='nsew', padx=10, pady=10)
 
-        self.run_button = ctk.CTkButton(self, text="Run", command=self._run, font=default_font)
-        self.run_button.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
+        self.settings_button = self.run_button = ctk.CTkButton(self, text="Settings", command=self._run, font=default_font)
+        self.settings_button.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
+
+        self.run_button = ctk.CTkButton(self, text="Run", command=self._run, font=default_font, height=40)
+        self.run_button.grid(row=5, column=0, columnspan=2, sticky='nsew', padx=10, pady=10)
 
         self.info_frame = InfoBox(self,
                                   "Name: %s" % master.instance.loaded_template_package.name,
@@ -91,15 +95,20 @@ class Editor(ctk.CTkScrollableFrame):
         self.input_frame.reload(self.master.instance.loaded_template_package)
 
     def _run(self):
-        if self.master.instance.run():
-            print('Success')
-            success_popup = ctk.CTkToplevel(self.master)
-            success_popup.geometry('360x160')
-            success_popup.title('Status')
-            success_popup.rowconfigure(index=0)
-            success_popup.columnconfigure(index=0)
-            message = ctk.CTkLabel(success_popup, text='Documents drafted Successfully in:\n' + self.master.instance.output_dir, font=default_font)
-            message.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
+        if self.master.instance.run():  # if program runs without errors, show a success popup
+            self.after(100, self._success_popup)
+
+    def _success_popup(self):
+        success_popup = ctk.CTkToplevel(self.master)
+        success_popup.geometry('360x160')
+        success_popup.title('Status')
+        success_popup.rowconfigure(index=0)
+        success_popup.columnconfigure(index=0)
+        message = ctk.CTkLabel(success_popup,
+                               text='Documents drafted Successfully in:\n' + self.master.instance.output_dir,
+                               font=default_font)
+        message.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
+        success_popup.attributes('-topmost', 1)
 
 
 class InfoBox(ctk.CTkFrame):
@@ -188,6 +197,18 @@ class MappedTextbox(ctk.CTkTextbox):
         self.mapped_dict[self.name] = self.get('1.0', "end").strip('\n')
 
 
+class SettingsFrame(ctk.CTkFrame):
+
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.grid_rowconfigure(index=0, weight=1)
+        self.grid_rowconfigure(index=1, weight=1)
+
+        self.grid_columnconfigure(index=1, weight=1)
+
+        self.output_label = ctk.CTkLabel(text="Output Folder", font=default_font)
+
 def _reload_row_labels_frame(master: InfoBox, heading_list: list[ctk.CTkLabel], label_list: list[ctk.CTkLabel],
                              new_texts: Union[list[str], tuple[str, ...]]):  #TODO: finish!!!
     if len(new_texts) >= len(label_list):  # if new items are added to the infobox
@@ -207,3 +228,4 @@ def _reload_row_labels_frame(master: InfoBox, heading_list: list[ctk.CTkLabel], 
                 label_list[i].configure(text=new_texts[i])  # configure the existing labels to show new text
             else:
                 label_list[i].configure(text="")  # once all new items added, clear existing text from extra labels
+
